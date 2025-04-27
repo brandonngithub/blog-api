@@ -61,7 +61,7 @@ app.post("/post", async (req, res) => {
 });
 
 // read endpoint for getting all posts
-app.get("/posts", async (req, res) => {
+app.get("/post", async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       include: {
@@ -156,7 +156,7 @@ app.post("/post/:id/comment", async (req, res) => {
 });
 
 // read endpoint for getting all comments for a post
-app.get("/post/:id/comments", async (req, res) => {
+app.get("/post/:id/comment", async (req, res) => {
   try {
     const { id } = req.params;
     const comments = await prisma.comment.findMany({
