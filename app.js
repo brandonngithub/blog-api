@@ -44,35 +44,16 @@ app.post("/user", async (req, res) => {
   }
 });
 
-// read endpoint for getting an existing user (login)
-app.get("/user", async (req, res) => {
-  try {
-    const { email, password } = req.query;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-
-    const user = await prisma.user.findUnique({ where: { email } });
-    
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-    
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    const token = generateToken(user);
+// post endpoint logging in
+app.post("/login", passport.authenticate('local', { session: false }), 
+  (req, res) => {
+    const token = generateToken(req.user);
     res.json({ 
-      user: { id: user.id, email: user.email, name: user.name },
+      user: { id: req.user.id, email: req.user.email, name: req.user.name },
       token 
     });
-  } catch (error) {
-    res.status(500).json({ error: "Login failed" });
   }
-});
+);
 
 // create endpoint for a single post
 app.post("/post", authenticate, async (req, res) => {

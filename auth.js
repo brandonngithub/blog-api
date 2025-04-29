@@ -5,6 +5,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const prisma = require('./prisma/client');
 
+// JWT configuration
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
+
 // Local Strategy for username/password login
 passport.use(new LocalStrategy(
   {
@@ -19,7 +25,6 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect email or password' });
       }
       
-      // Compare hashed password (assuming you've stored hashed passwords)
       const isValid = await bcrypt.compare(password, user.password);
       
       if (!isValid) {
@@ -32,12 +37,6 @@ passport.use(new LocalStrategy(
     }
   }
 ));
-
-// JWT configuration
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET || 'your_jwt_secret_key', // Use environment variable in production
-};
 
 // Passport JWT strategy
 passport.use(new JwtStrategy(jwtOptions, async (payload, done) => {
