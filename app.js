@@ -2,11 +2,16 @@ const express = require("express");
 const prisma = require("./prisma/client.js");
 const bcrypt = require("bcryptjs")
 const { passport, generateToken, authenticate } = require('./auth');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
 app.use(passport.initialize());
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true
+}));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
